@@ -4,19 +4,27 @@ using Unity.Netcode.Components;
 
 public class PlayerController : NetworkBehaviour
 {
-    public float speed = 20;
-
-    private NetworkTransform _transform;
-
+    public float moveSpeed;
+    private CharacterController characterController;
     private void Start()
     {
-        _transform = GetComponent<NetworkTransform>();
+        characterController = GetComponent<CharacterController>();
     }
     private void Update()
     {
-        if (!IsOwner) return;
-        var movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        _transform.transform.position += movement * speed * Time.deltaTime;
-    }
+        //Vi gemmer movement inputtet fra tastatur eller kontroller i 2 variabler
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
+        //Vi sætter movement inputtet sammen til en ny vector
+        Vector3 input = new Vector3(horizontal, 0, vertical);
+        
+        //Vi begrænser vores vektor til en længde på 1, så vi ikke bevæger os hurtigere frem, når vi bevæger os diagonalt
+        input = Vector3.ClampMagnitude(input, 1f);
+
+        
+        characterController.Move(input * moveSpeed * Time.deltaTime);
+
+        
+    }
 }
