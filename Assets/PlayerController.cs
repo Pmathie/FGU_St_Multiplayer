@@ -23,8 +23,28 @@ public class PlayerController : NetworkBehaviour
         input = Vector3.ClampMagnitude(input, 1f);
 
         
-        characterController.Move(input * moveSpeed * Time.deltaTime);
 
-        
+        Camera mainCamera = Camera.main;
+
+        //Vi gemmer retningen, som kameraet vender, så vi altid kan bevæge os i den retning, kameraet vender
+        Vector3 forward = mainCamera.transform.forward;
+        Vector3 right = mainCamera.transform.right;
+
+        //Vi sætter y-retningen til 0, så vi ikke bevæger os op eller ned, når kameraet kigger op eller ned
+
+        //Vi normaliserer vektoren, så vi altid bevæger os lige langt uanset hvor vi kigger hen
+        forward.Normalize();
+        right.Normalize();
+
+        //Vi kombinerer retningen vores kamera vender med vores moveInput, så vi bevæger os i den retning, vi kigger
+        Vector3 moveDirection = forward * input.z + right*input.x;
+
+        characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
+
+
+
+
+
+
     }
 }
